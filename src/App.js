@@ -1,25 +1,49 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useMemo, useCallback, useEffect } from "react";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+const ExpensiveOperationComponent = ({ text, onClick }) => {
+    const reversedText = useMemo(() => {
+        console.log("Calculating reversedText");
+        return text.split("").reverse().join("");
+    }, [text]);
 
-export default App;
+    useEffect(() => {
+        console.log("Effect: Count has been updated");
+    }, [text, onClick]);
+
+    return (
+        <div>
+            <p>Исходный текст: {text}</p>
+            <p>Реверс текста: {reversedText}</p>
+            <button onClick={onClick}>Нажми меня</button>
+        </div>
+    );
+};
+
+const ExampleWithMemoAndCallback = () => {
+    const [inputText, setInputText] = useState("");
+    const [count, setCount] = useState(0);
+
+    const handleClick = useCallback(() => {
+        console.log("Обработка клика");
+        setCount((prevCount) => prevCount + 1);
+    }, []);
+
+    useEffect(() => {
+        // После каждого рендера, включая изменение счетчика
+        console.log("Effect: Count has been updated");
+    }, [count]);
+
+    return (
+        <div>
+            <input
+                type="text"
+                value={inputText}
+                onChange={(e) => setInputText(e.target.value)}
+            />
+            <ExpensiveOperationComponent text={inputText} onClick={handleClick} />
+            <p>Количество кликов: {count}</p>
+        </div>
+    );
+};
+
+export default ExampleWithMemoAndCallback;
